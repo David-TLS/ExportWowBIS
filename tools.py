@@ -26,7 +26,6 @@ def extractAll(re, text):
 def distinct(array):
     return list(set(array))
 
-
 # select all bis and return a collection of wowhead link  
 class WowIsClassicBisParser(HTMLParser):
         def __init__(self, html):
@@ -56,6 +55,21 @@ class FetchHtmls(FetchUrls):
             htmls.append(html.decode('utf8'))
         return htmls
 
+class Phase:
+    def __init__(self, name, classes):
+        self.name = name
+        self.classes = classes
+
+class Classe:
+    def __init__(self, name, spes):
+        self.name = name
+        self.classes = spes
+
+class spe:
+    items = None
+    def __init__(self, name):
+        self.name = name
+    
 class Item:
     id = None
     name = None

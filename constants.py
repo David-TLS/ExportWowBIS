@@ -21,8 +21,9 @@ class RegexEnum():
     REGEX_IS_CONTAINED = 'id: \'contained-in-object\''
     REGEX_TREASURE_LOCATION ='(?<=location":\[locationId\],"name":")(.*?)(?=")'
 
-class AttributeEnum():
+class Global():
     DATA_WH_ICON_SIZE = 'data-wh-icon-size'
+    URL_WOW_IS_CLASSIC = 'https://www.wowisclassic.com/en/best-in-slot/'
 
 
 class TypeEnum():
@@ -51,4 +52,5 @@ class SlotEnum(Enum):
     Trinket = 12
     MainHand = 21
     OffHand = 23
-    Ranged= 15
+    Ranged = 15
+    TwoHand = 17

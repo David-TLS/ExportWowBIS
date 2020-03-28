@@ -21,7 +21,7 @@ class FetchUrls():
     @staticmethod
     async def __fetch(url, session):
         async with session.get(url) as response:
-            return await response.read()
+            return {'origin': url, 'content': await response.read()}
 
     @staticmethod
     async def __bound_fetch(sem, url, session):

@@ -1,4 +1,3 @@
-import json
 from html.parser import HTMLParser
 
 import regex
@@ -22,9 +21,12 @@ def extractAll(re, text):
         return result
     return False
 
-
 def distinct(array):
     return list(set(array))
+
+def printGroupedData(groupedData):
+    for k, v in groupedData:
+        print("Group {} {}".format(k, list(v)))
 
 # select all bis and return a collection of wowhead link  
 class WowIsClassicBisParser(HTMLParser):
@@ -56,25 +58,11 @@ class FetchHtmls(FetchUrls):
             responses.append(response)
         return responses
 
-class Phase:
-    def __init__(self, name, classes):
-        self.name = name
-        self.classes = classes
-
-class Classe:
-    def __init__(self, name, spes):
-        self.name = name
-        self.spes = spes
-
-class Spe:
-    items = None
-    def __init__(self, name):
-        self.name = name
-
 class Page(object):
     pages = None
     html = None
     metadata = {}
+
     def __init__(self, url, metadata):
         self.url = url
         self.metadata = metadata
@@ -88,3 +76,6 @@ class Item(object):
     method = None
     slot = None
     url = None
+    phase = None
+    classes = None
+    spe = None

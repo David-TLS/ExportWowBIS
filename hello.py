@@ -1,11 +1,16 @@
 import json
+from itertools import groupby
+from operator import itemgetter
+
+import jsonpickle
 
 import data
 from constants import Global, RegexEnum, SlotEnum, TypeEnum
-from tools import (Classe, FetchHtmls, Item, Page, WowIsClassicBisParser,
-                   distinct, extractAll, extractSingle)
+from tools import (FetchHtmls, Item, Page, WowIsClassicBisParser, distinct,
+                   extractAll, extractSingle, printGroupedData)
 
 
+# return all urls for all phase/classes/spe
 def generatePage():
     pages = []
     for phase in data.phases:
@@ -117,12 +122,17 @@ def extractItems(pages):
                 page.metadata['items'].append(item)
     return pages
 
+def pagesToBistracker(pages):
+    sorted_animals = sorted(pages, key = lambda p: p.metadata['classe'])
+    printGroupedData(groupby(sorted_animals, key = lambda p: p.metadata['classe']))
 
 
+pages = extractItems(extractItemUrls([Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', { 'phase': 4, 'classe': 'priest', 'spe': 'holy' })]))
+pagesToBistracker(pages)
 
+# print(json.dumps([ob.__dict__ for
 
-aaaa = extractItems(extractItemUrls([Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', {})]))
-print(json.dumps([ob.__dict__ for ob in aaaa]))
+#  ob in aaaa]))
     
 
  

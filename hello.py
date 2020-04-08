@@ -123,8 +123,50 @@ def extractItems(pages):
     return pages
 
 def pagesToBistracker(pages):
-    sorted_animals = sorted(pages, key = lambda p: p.metadata['classe'])
-    printGroupedData(groupby(sorted_animals, key = lambda p: p.metadata['classe']))
+    bis =  {'BiSData' : {}}
+
+    sorted_classes = sorted(pages, key = lambda p: p.metadata['classe'])
+    classeGroups = groupby(sorted_classes, key = lambda p: p.metadata['classe'])
+    for classeKey, classes in classeGroups:
+        bis['BiSData'] = {classeKey : {}}
+        for classe in classes:
+
+            sorted_spes = sorted(pages, key = lambda p: p.metadata['spe'])
+            spesGroups = groupby(sorted_spes, key = lambda p: p.metadata['spe'])
+            for speKey, spes in spesGroups:
+                bis['BiSData'][classeKey] = {speKey : {}}
+                for spe in spes:
+
+                    sorted_phases = sorted(pages, key = lambda p: p.metadata['phase'])
+                    phasesGroups = groupby(sorted_phases, key = lambda p: p.metadata['phase'])
+                    for phaseKey, phases in phasesGroups:
+                        bis['BiSData'][classeKey][speKey] = {phaseKey : {}}
+                        for items in phases:
+    
+                            for item in items.metadata['items']:
+                                slotItem = {
+                                    'itemID' : item.id,
+                                    'obtain': {
+                                        'Zone' : item.location,
+                                        'Type' : item.type,
+                                        'Method' : item.method,
+                                        'Drop' : item.dropRate
+                                    }
+                                }
+                                bis[classeKey][speKey][phaseKey] = {SlotEnum(item.slot) : slotItem }
+    return bis
+            
+
+
+                
+
+                            
+                            
+                            
+
+
+    
+
 
 
 pages = extractItems(extractItemUrls([Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', { 'phase': 4, 'classe': 'priest', 'spe': 'holy' })]))

@@ -1,4 +1,5 @@
 from html.parser import HTMLParser
+from itertools import groupby
 
 import regex
 import urllib3
@@ -27,6 +28,23 @@ def distinct(array):
 def printGroupedData(groupedData):
     for k, v in groupedData:
         print("Group {} {}".format(k, list(v)))
+
+class expendo(object):
+    pass
+
+class GroupMetaData():
+    def __init__(self, pages, key):
+        self.pages = pages
+        self.key = key
+
+    def __enter__(self):
+        sorted_key = sorted(self.pages, key = lambda p: p.metadata[self.key])
+        groups = groupby(sorted_key, key = lambda p: p.metadata[self.key])
+        for key, group in groups:
+            yield key, list(groups)
+
+    def __exit__(self, type, value, traceback):
+        return
 
 # select all bis and return a collection of wowhead link  
 class WowIsClassicBisParser(HTMLParser):

@@ -1,6 +1,5 @@
 import json
 from itertools import groupby
-from operator import itemgetter
 
 import jsonpickle
 
@@ -123,24 +122,24 @@ def extractItems(pages):
     return pages
 
 def pagesToBistracker(pages):
-    bis =  {'BiSData' : {}}
+    bis =  {'BiSData' : []}
 
     sorted_classes = sorted(pages, key = lambda p: p.metadata['classe'])
     classeGroups = groupby(sorted_classes, key = lambda p: p.metadata['classe'])
     for classeKey, classes in classeGroups:
-        bis['BiSData'] = {classeKey : {}}
+        classeDic = {classeKey: []}
         for classe in classes:
 
             sorted_spes = sorted(pages, key = lambda p: p.metadata['spe'])
             spesGroups = groupby(sorted_spes, key = lambda p: p.metadata['spe'])
             for speKey, spes in spesGroups:
-                bis['BiSData'][classeKey] = {speKey : {}}
+                speDic = {speKey: []}
                 for spe in spes:
 
                     sorted_phases = sorted(pages, key = lambda p: p.metadata['phase'])
                     phasesGroups = groupby(sorted_phases, key = lambda p: p.metadata['phase'])
                     for phaseKey, phases in phasesGroups:
-                        bis['BiSData'][classeKey][speKey] = {phaseKey : {}}
+                        phaseDic = {phaseKey: []}
                         for items in phases:
     
                             for item in items.metadata['items']:
@@ -153,21 +152,16 @@ def pagesToBistracker(pages):
                                         'Drop' : item.dropRate
                                     }
                                 }
-                                bis[classeKey][speKey][phaseKey] = {SlotEnum(item.slot) : slotItem }
-    return bis
+
+                                phaseDic[phaseKey].append({ SlotEnum(item.slot).name: slotItem })
+
+                        speDic[speKey].append(phaseDic)
+
+                    classeDic[classeKey].append(speDic)
+
+            bis['BiSData'].append(classeDic)
             
-
-
-                
-
-                            
-                            
-                            
-
-
-    
-
-
+    return bis
 
 pages = extractItems(extractItemUrls([Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', { 'phase': 4, 'classe': 'priest', 'spe': 'holy' })]))
 pagesToBistracker(pages)

@@ -2,7 +2,7 @@ import unittest
 
 from constants import SlotEnum, TypeEnum
 from fetch_urls import FetchUrls
-from hello import extractItemInformations
+from hello import extractItems
 from tools import Item
 
 
@@ -142,13 +142,13 @@ class UnitTest():
         expected6 = Mockup.item_by_quest()
         expected7 = Mockup.item_by_treasure()
 
-        item1 = extractItemInformations([expected1.url])[0]
-        item2 = extractItemInformations([expected2.url])[0]
-        item3 = extractItemInformations([expected3.url])[0]
-        item4 = extractItemInformations([expected4.url])[0]
-        item5 = extractItemInformations([expected5.url])[0]
-        item6 = extractItemInformations([expected6.url])[0]
-        item7 = extractItemInformations([expected7.url])[0]
+        item1 = extractItems([expected1.url])[0]
+        item2 = extractItems([expected2.url])[0]
+        item3 = extractItems([expected3.url])[0]
+        item4 = extractItems([expected4.url])[0]
+        item5 = extractItems([expected5.url])[0]
+        item6 = extractItems([expected6.url])[0]
+        item7 = extractItems([expected7.url])[0]
 
         Assert.assert_item('item_test_boss', expected1, item1)
         Assert.assert_item('item_world_drop', expected2, item2)

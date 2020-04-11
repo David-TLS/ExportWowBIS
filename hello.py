@@ -1,18 +1,17 @@
 import json
 from itertools import groupby
 
-import jsonpickle
-
 import data
-from constants import Global, RegexEnum, SlotEnum, TypeEnum
+from constants import (ClasseEnum, Global, PhaseEnum, RegexEnum, SlotEnum,
+                       SpeEnum, TypeEnum, WowHeadEnum, WowIsClassicSpe)
 from tools import (FetchHtmls, Item, Page, WowIsClassicBisParser, distinct,
-                   extractAll, extractSingle, printGroupedData)
+                   extractAll, extractSingle, listEnum, printGroupedData)
 
 
 # return all urls for all phase/classes/spe
 def generatePage():
     pages = []
-    for phase in data.phases:
+    for phase in listEnum(PhaseEnum):
         url = ''
         for classe in data.classes:
             for spe in data.classes[classe]:
@@ -23,7 +22,7 @@ def generatePage():
                     #this classe have several spe
                     url = Global.URL_WOW_IS_CLASSIC + classe + '/?phase=' + phase + "&" + 'specialization=' + spe
 
-                pages.append(Page(url, { 'phase': phase, 'classe': classe, 'spe': spe }))
+                pages.append(Page(url, { 'phase': phase, 'classe': classe, 'spe': spe}))
     return pages
 
 def extractItemUrls(pages):
@@ -49,7 +48,7 @@ def extractItems(pages):
                 item.id = extractSingle(RegexEnum.REGEX_ITEM_ID, html)
                 item.name = extractSingle(RegexEnum.REGEX_ITEM_NAME.replace('{itemId}', item.id), html)
                 item.url = response['origin']
-                item.slot = SlotEnum(int(extractSingle(RegexEnum.REGEX_SLOT_ID, html)))
+                item.slot = WowHeadEnum[extractSingle(RegexEnum.REGEX_SLOT_ID, html)]
                 item.phase = page.metadata.get('phase', '')
                 item.classe = page.metadata.get('classe', '')
                 item.spe = page.metadata.get('spe','')
@@ -100,15 +99,16 @@ def extractItems(pages):
                         # item by craft
                         if(bool(profession)):
                             item.type = TypeEnum.TYPE_BY_PROFESSION.replace('{professionName}', profession.capitalize())
-                            craftLocation  = extractAll(RegexEnum.REGEX_CRAFT_LOCATION.replace('{itemName}', str(item.name)), html)[0]
                             item.dropRate = TypeEnum.EMPTY
                             item.method = TypeEnum.EMPTY
-                            
-                            # item have a sub locationz
-                            if(bool(craftLocation[3])):
-                                item.location = craftLocation[3]
-                            else:
-                                item.location  = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(craftLocation[5])), html)
+
+                            craftLocation  = extractAll(RegexEnum.REGEX_CRAFT_LOCATION.replace('{itemName}', str(item.name)), html)
+                            if(craftLocation):
+                                # item have a sub locationz
+                                if(craftLocation and bool(craftLocation[0][3])):
+                                    item.location = craftLocation[0][3]
+                                else:
+                                    item.location  = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(craftLocation[0][5])), html)
 
                         # item by quest
                         else:
@@ -126,20 +126,32 @@ def pagesToBistracker(pages):
 
     sorted_classes = sorted(pages, key = lambda p: p.metadata['classe'])
     classeGroups = groupby(sorted_classes, key = lambda p: p.metadata['classe'])
+
     for classeKey, classes in classeGroups:
-        classeDic = {classeKey: []}
+
+        classeName = ClasseEnum(classeKey).name
+        classeDic = {classeName: []}
+
         for classe in classes:
 
-            sorted_spes = sorted(pages, key = lambda p: p.metadata['spe'])
+            sorted_spes = sorted(classe, key = lambda p: p.metadata['spe'])
             spesGroups = groupby(sorted_spes, key = lambda p: p.metadata['spe'])
+
             for speKey, spes in spesGroups:
-                speDic = {speKey: []}
+
+                speName =  SpeEnum(WowIsClassicSpe[speKey].value).name
+                speDic = {speName: []}
+
                 for spe in spes:
 
-                    sorted_phases = sorted(pages, key = lambda p: p.metadata['phase'])
+                    sorted_phases = sorted(spe, key = lambda p: p.metadata['phase'])
                     phasesGroups = groupby(sorted_phases, key = lambda p: p.metadata['phase'])
+
                     for phaseKey, phases in phasesGroups:
-                        phaseDic = {phaseKey: []}
+
+                        phaseName = PhaseEnum(phaseKey).name
+                        phaseDic = {phaseName: []}
+
                         for items in phases:
     
                             for item in items.metadata['items']:
@@ -153,17 +165,35 @@ def pagesToBistracker(pages):
                                     }
                                 }
 
-                                phaseDic[phaseKey].append({ SlotEnum(item.slot).name: slotItem })
+                                phaseDic[phaseName].append({ item.slot.name: slotItem })
 
-                        speDic[speKey].append(phaseDic)
+                        speDic[speName].append(phaseDic)
 
-                    classeDic[classeKey].append(speDic)
+                    classeDic[classeName].append(speDic)
 
             bis['BiSData'].append(classeDic)
             
     return bis
 
-pages = extractItems(extractItemUrls([Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', { 'phase': 4, 'classe': 'priest', 'spe': 'holy' })]))
+# pages = generatePage()
+# extractItemUrls(pages)
+# extractItems(pages)
+# extract = pagesToBistracker(pages)
+# print(json.dumps(extract))
+
+pages = extractItems(
+    extractItemUrls(
+        [
+            Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', 
+            { 
+                'phase': '4',
+                'classe': 'priest', 
+                'spe': 'holy'
+
+            })
+        ]
+    )
+)
 pagesToBistracker(pages)
 
 # print(json.dumps([ob.__dict__ for

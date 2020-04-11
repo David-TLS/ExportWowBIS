@@ -8,6 +8,9 @@ from constants import Global, RegexEnum
 from fetch_urls import FetchUrls
 
 
+def listEnum(enum):
+    return list(map(lambda _: str(_.value), enum))
+
 def extractSingle(re, text, indexGroup = 0):
     groups =  regex.search(re, text)
     if(bool(groups)):

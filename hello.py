@@ -119,11 +119,37 @@ def extractItems(pages):
 
                         # item by quest
                         else:
-                            locationId = extractSingle(RegexEnum.REGEX_QUEST_LOCATION_ID, html)
-                            item.location = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(locationId)), html)
+
+                            locationIds = []
+
+                            # get location id by group (2 group)
+                            for locationId in extractAll(RegexEnum.REGEX_QUEST_LOCATION_ID, html):
+                                if(locationId[0] == ''):
+                                    locationIds.append(locationId[1])
+                                else:
+                                    locationIds.append(locationId[0])
+                                    
                             item.type = TypeEnum.TYPE_BY_QUEST
-                            item.method = extractSingle(RegexEnum.REGEX_QUEST_NAME, html)
                             item.dropRate = TypeEnum.EMPTY
+
+                            locations = []
+                            for locationId in locationIds:
+                                location = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(locationId)), html)
+                                if(bool(location)):
+                                    locations.append(location)
+
+                            if(len(locations) > 1):
+                                item.location = ', '.join(locations)
+                            else:
+                                item.location = locations[0]
+
+                            
+                            methods = distinct(extractAll(RegexEnum.REGEX_QUEST_NAME, html))
+                            
+                            if(bool(methods) and len(methods) > 1):
+                                item.method = ', '.join(methods)
+                            else:
+                                item.method = methods[0]
 
                 page.metadata['items'].append(item)
     return pages

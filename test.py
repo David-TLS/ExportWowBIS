@@ -103,6 +103,19 @@ class Mockup():
         expected.url = 'https://classic.wowhead.com/item=11927/legplates-of-the-eternal-guardian#contained-in-object'
         return expected
 
+    @staticmethod
+    def item_by_quest_several_same_location():
+        #arrange
+        expected = Item()
+        expected.id = '19383'
+        expected.name = 'Master Dragonslayer\'s Medallion'
+        expected.location = 'Stormwind City, Orgrimmar'
+        expected.type = TypeEnum.TYPE_BY_QUEST
+        expected.method = "The Lord of Blackrock"
+        expected.slot = SlotEnum(2)
+        expected.url = 'https://classic.wowhead.com/item=19383/master-dragonslayers-medallion'
+        return expected
+
 class Assert():
     @staticmethod
     def assert_item(methodName, expected, item):
@@ -141,6 +154,7 @@ class UnitTest():
         expected5 = Mockup.item_by_craft_one_location()
         expected6 = Mockup.item_by_quest()
         expected7 = Mockup.item_by_treasure()
+        expected8 = Mockup.item_by_quest_several_same_location()
 
         item1 = extractItems([Page(expected1.url, {'itemUrls': [expected1.url]})])[0].metadata['items'][0]
         item2 = extractItems([Page(expected2.url, {'itemUrls': [expected2.url]})])[0].metadata['items'][0]
@@ -149,6 +163,7 @@ class UnitTest():
         item5 = extractItems([Page(expected5.url, {'itemUrls': [expected5.url]})])[0].metadata['items'][0]
         item6 = extractItems([Page(expected6.url, {'itemUrls': [expected6.url]})])[0].metadata['items'][0]
         item7 = extractItems([Page(expected7.url, {'itemUrls': [expected7.url]})])[0].metadata['items'][0]
+        item8 = extractItems([Page(expected8.url, {'itemUrls': [expected8.url]})])[0].metadata['items'][0]
 
         Assert.assert_item('item_test_boss', expected1, item1)
         Assert.assert_item('item_world_drop', expected2, item2)
@@ -157,5 +172,6 @@ class UnitTest():
         Assert.assert_item('item_by_craft_one_location', expected5, item5)
         Assert.assert_item('item_by_quest', expected6, item6)
         Assert.assert_item('item_by_treasure', expected7, item7)
+        Assert.assert_item('item_by_treasure', expected8, item8)
         
 UnitTest.test_items()

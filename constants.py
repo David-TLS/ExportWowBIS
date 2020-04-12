@@ -35,7 +35,7 @@ class TypeEnum():
     METHOD_BY_QUEST = "By quest: {questName}"
     METHOD_KILL = "Kill: {targetName}"
     METHOD_SEVERAL_BOSSESS = "Several bosses"
-    EMPTY = "UNKNOW"
+    EMPTY = "N/A"
 
 class SlotEnum(Enum):
     Head = auto()
@@ -63,7 +63,7 @@ WowHeadEnum = {
     '1'  : SlotEnum.Head,
     '2'  : SlotEnum.Neck,
     '3'  : SlotEnum.Shoulder,
-    '16'  : SlotEnum.Back,
+    '16'  : SlotEnum.Cloak,
     '5'  : SlotEnum.Chest,
     '9'  : SlotEnum.Wrist,
     '10'  : SlotEnum.Gloves,
@@ -87,9 +87,9 @@ class PhaseEnum(Enum):
     # Phase2PreRaid = 'pre-raid'
     # Phase2 = '2'
     Phase3 = '3'
-    Phase4 = '4'
-    Phase5 = '5'
-    Phase6 = '6'
+    # Phase4 = '4'
+    # Phase5 = '5'
+    # Phase6 = '6'
 
 class ClasseEnum(Enum):
     Druid = 'druid'

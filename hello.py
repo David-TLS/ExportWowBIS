@@ -120,36 +120,40 @@ def extractItems(pages):
                         # item by quest
                         else:
 
-                            locationIds = []
-
-                            # get location id by group (2 group)
-                            for locationId in extractAll(RegexEnum.REGEX_QUEST_LOCATION_ID, html):
-                                if(locationId[0] == ''):
-                                    locationIds.append(locationId[1])
-                                else:
-                                    locationIds.append(locationId[0])
-                                    
                             item.type = TypeEnum.TYPE_BY_QUEST
                             item.dropRate = TypeEnum.EMPTY
 
-                            locations = []
-                            for locationId in locationIds:
-                                location = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(locationId)), html)
-                                if(bool(location)):
-                                    locations.append(location)
 
-                            if(len(locations) > 1):
-                                item.location = ', '.join(locations)
-                            else:
-                                item.location = locations[0]
+                            # extract quest location id  id by group (2 group)
+                            locationIds = []
+                            extractLocations = extractAll(RegexEnum.REGEX_QUEST_LOCATION_ID, html)
+                            if(bool(extractLocations)):
+                                for locationId in extractLocations:
+                                    if(locationId[0] == ''):
+                                        locationIds.append(locationId[1])
+                                    else:
+                                        locationIds.append(locationId[0])
 
-                            
-                            methods = distinct(extractAll(RegexEnum.REGEX_QUEST_NAME, html))
-                            
-                            if(bool(methods) and len(methods) > 1):
-                                item.method = ', '.join(methods)
-                            else:
-                                item.method = methods[0]
+                                # extract quest location name
+                                locations = []
+                                for locationId in locationIds:
+                                    location = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(locationId)), html)
+                                    if(bool(location)):
+                                        locations.append(location)
+                                        
+                                if(len(locations) > 1):
+                                    item.location = ', '.join(locations)
+                                else:
+                                    item.location = locations[0]
+
+                            # extract method (quest name)
+                            extractMethods = extractAll(RegexEnum.REGEX_QUEST_NAME, html)
+                            if(bool(extractMethods)):
+                                methods = distinct(extractMethods)
+                                if(len(methods) > 1):
+                                    item.method = ', '.join(methods)
+                                else:
+                                    item.method = methods[0]
 
                 page.metadata['items'].append(item)
     return pages
@@ -189,24 +193,24 @@ def pagesToBistracker(pages):
 
     return dic
 
-# log('--start generatePage')
-# pages = generatePage()
-# log('--end generatePage')
+log('--start generatePage')
+pages = generatePage()
+log('--end generatePage')
 
-# log('--start extractItemUrls')
-# extractItemUrls(pages)
-# log('--end extractItemUrls')
+log('--start extractItemUrls')
+extractItemUrls(pages)
+log('--end extractItemUrls')
 
-# log('--start extractItems')
-# extractItems(pages)
-# log('--start extractItems')
+log('--start extractItems')
+extractItems(pages)
+log('--end extractItems')
 
-# log('--start pagesToBistracker')
-# extract = pagesToBistracker(pages)
-# log('--end pagesToBistracker')
+log('--start pagesToBistracker')
+extract = pagesToBistracker(pages)
+log('--end pagesToBistracker')
 
-# with open('out.txt', 'w') as f:
-#     print(json.dumps(extract), file=f)
+with open('out.txt', 'w') as f:
+    print(json.dumps(extract), file=f)
 
 
 # pages = extractItems(

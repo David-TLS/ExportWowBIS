@@ -86,7 +86,7 @@ class PhaseEnum(Enum):
     # Phase1 = '1'
     # Phase2PreRaid = 'pre-raid'
     # Phase2 = '2'
-    # Phase3 = '3'
+    Phase3 = '3'
     Phase4 = '4'
     Phase5 = '5'
     Phase6 = '6'

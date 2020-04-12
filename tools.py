@@ -1,5 +1,7 @@
+import logging
 from html.parser import HTMLParser
 from itertools import groupby
+from time import gmtime, strftime
 
 import regex
 import urllib3
@@ -8,9 +10,16 @@ from constants import Global, RegexEnum
 from fetch_urls import FetchUrls
 
 
+# file in file with datetime
+def log(string):
+    time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    logging.debug(time + ' - ' + string)
+
+# enumerate a enum
 def listEnum(enum):
     return list(map(lambda _: str(_.value), enum))
 
+# extract the first result
 def extractSingle(re, text, indexGroup = 0):
     groups =  regex.search(re, text)
     if(bool(groups)):
@@ -19,35 +28,31 @@ def extractSingle(re, text, indexGroup = 0):
             return result.strip()
     return False
 
+# extract all results
 def extractAll(re, text):
     result =  regex.findall(re, text)
     if(bool(result)):
         return result
     return False
 
+# disctint value in list
 def distinct(array):
     return list(set(array))
 
-def printGroupedData(groupedData):
-    for k, v in groupedData:
-        print("Group {} {}".format(k, list(v)))
-
-class expendo(object):
-    pass
-
-class GroupMetaData():
-    def __init__(self, pages, key):
-        self.pages = pages
-        self.key = key
-
-    def __enter__(self):
-        sorted_key = sorted(self.pages, key = lambda p: p.metadata[self.key])
-        groups = groupby(sorted_key, key = lambda p: p.metadata[self.key])
-        for key, group in groups:
-            yield key, list(groups)
-
-    def __exit__(self, type, value, traceback):
-        return
+# merge neested dictionnary
+def merge(a, b, path=None):
+    if path is None: path = []
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge(a[key], b[key], path + [str(key)])
+            elif a[key] == b[key]:
+                pass # same leaf value
+            else:
+                raise Exception('Conflict at %s' % '.'.join(path + [str(key)]))
+        else:
+            a[key] = b[key]
+    return a
 
 # select all bis and return a collection of wowhead link  
 class WowIsClassicBisParser(HTMLParser):
@@ -71,6 +76,7 @@ class WowIsClassicBisParser(HTMLParser):
                 self.urls.append(attr['href'])
             return
 
+# download an decode to utf8 a collection of url
 class FetchHtmls(FetchUrls):
     def __enter__(self):
         responses = []
@@ -79,6 +85,7 @@ class FetchHtmls(FetchUrls):
             responses.append(response)
         return responses
 
+# Page object information
 class Page(object):
     pages = None
     html = None
@@ -88,6 +95,7 @@ class Page(object):
         self.url = url
         self.metadata = metadata
 
+# Wow item information
 class Item(object):
     id = None
     name = None

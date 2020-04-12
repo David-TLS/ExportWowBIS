@@ -1,11 +1,12 @@
 import json
+import logging
 from itertools import groupby
 
 import data
 from constants import (ClasseEnum, Global, PhaseEnum, RegexEnum, SlotEnum,
                        SpeEnum, TypeEnum, WowHeadEnum, WowIsClassicSpe)
 from tools import (FetchHtmls, Item, Page, WowIsClassicBisParser, distinct,
-                   extractAll, extractSingle, listEnum, printGroupedData)
+                   extractAll, extractSingle, listEnum, log, merge)
 
 
 # return all urls for all phase/classes/spe
@@ -37,7 +38,12 @@ def extractItemUrls(pages):
     return pages
 
 def extractItems(pages):
-    for page in pages:
+    lenPages = len(pages)
+    for i in range(lenPages):
+        page = pages[i]
+
+        log("pages: " + str(i + 1) + '/' + str(lenPages))
+
         page.metadata['items'] = []
         with FetchHtmls(page.metadata['itemUrls']) as responses:
             for response in responses:
@@ -122,79 +128,97 @@ def extractItems(pages):
     return pages
 
 def pagesToBistracker(pages):
-    bis =  {'BiSData' : []}
-
-    sorted_classes = sorted(pages, key = lambda p: p.metadata['classe'])
-    classeGroups = groupby(sorted_classes, key = lambda p: p.metadata['classe'])
-
-    for classeKey, classes in classeGroups:
-
-        classeName = ClasseEnum(classeKey).name
-        classeDic = {classeName: []}
-
-        for classe in classes:
-
-            sorted_spes = sorted(classe, key = lambda p: p.metadata['spe'])
-            spesGroups = groupby(sorted_spes, key = lambda p: p.metadata['spe'])
-
-            for speKey, spes in spesGroups:
-
-                speName =  SpeEnum(WowIsClassicSpe[speKey].value).name
-                speDic = {speName: []}
-
-                for spe in spes:
-
-                    sorted_phases = sorted(spe, key = lambda p: p.metadata['phase'])
-                    phasesGroups = groupby(sorted_phases, key = lambda p: p.metadata['phase'])
-
-                    for phaseKey, phases in phasesGroups:
-
-                        phaseName = PhaseEnum(phaseKey).name
-                        phaseDic = {phaseName: []}
-
-                        for items in phases:
+    dic =  {}
     
-                            for item in items.metadata['items']:
-                                slotItem = {
-                                    'itemID' : item.id,
-                                    'obtain': {
-                                        'Zone' : item.location,
-                                        'Type' : item.type,
-                                        'Method' : item.method,
-                                        'Drop' : item.dropRate
-                                    }
-                                }
+    key_pages = lambda p: p.metadata['classe']
+    sorted_pages = sorted(pages, key = key_pages)
+    group_pages = groupby(sorted_pages, key = key_pages)
 
-                                phaseDic[phaseName].append({ item.slot.name: slotItem })
+    for key_pages, pages_classes in group_pages:
 
-                        speDic[speName].append(phaseDic)
+        for page in pages_classes:
 
-                    classeDic[classeName].append(speDic)
+            name_classe = ClasseEnum(key_pages).name
+            name_spe = (WowIsClassicSpe[page.metadata['spe']].value).name
+            name_phase = PhaseEnum(page.metadata['phase']).name
+            slots = []
 
-            bis['BiSData'].append(classeDic)
-            
-    return bis
+            for item in page.metadata['items']:
 
-# pages = generatePage()
-# extractItemUrls(pages)
-# extractItems(pages)
+                slot = {
+                    'itemID' : item.id,
+                    'obtain': {
+                        'Zone' : item.location,
+                        'Type' : item.type,
+                        'Method' : item.method,
+                        'Drop' : item.dropRate,
+                        'Url' : item.url
+                    }
+                }
+
+                slots.append({item.slot.name: slot})
+
+            dic = merge(dic, {name_classe: {name_spe: {name_phase: slots}}})
+
+    return dic
+
+logging.basicConfig(filename='hello.log',level=logging.DEBUG)
+
+log('--start generatePage')
+pages = generatePage()
+log('--end generatePage')
+
+log('--start extractItemUrls')
+extractItemUrls(pages)
+log('--end extractItemUrls')
+
+log('--start extractItems')
+extractItems(pages)
+log('--start extractItems')
+
+log('--start pagesToBistracker')
+extract = pagesToBistracker(pages)
+log('--end pagesToBistracker')
+
+with open('out.txt', 'w') as f:
+    print(json.dumps(extract), file=f)
+
+
+# pages = extractItems(
+#     extractItemUrls(
+#         [
+#             Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', 
+#             { 
+#                 'phase': '4',
+#                 'classe': 'priest', 
+#                 'spe': 'holy'
+
+#             }),
+#             Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=5&specialization=holy', 
+#             { 
+#                 'phase': '5',
+#                 'classe': 'priest', 
+#                 'spe': 'holy'
+
+#             }),
+#             Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=3&specialization=shadow', 
+#             { 
+#                 'phase': '3',
+#                 'classe': 'priest', 
+#                 'spe': 'shadow'
+
+#             }),
+#             Page('https://www.wowisclassic.com/en/best-in-slot/warrior/?phase=3&specialization=prot', 
+#             { 
+#                 'phase': '3',
+#                 'classe': 'warrior', 
+#                 'spe': 'prot'
+
+#             })
+#         ]
+#     )
+# )
 # extract = pagesToBistracker(pages)
-# print(json.dumps(extract))
-
-pages = extractItems(
-    extractItemUrls(
-        [
-            Page('https://www.wowisclassic.com/en/best-in-slot/priest/?phase=4&specialization=holy', 
-            { 
-                'phase': '4',
-                'classe': 'priest', 
-                'spe': 'holy'
-
-            })
-        ]
-    )
-)
-pagesToBistracker(pages)
 
 # print(json.dumps([ob.__dict__ for
 

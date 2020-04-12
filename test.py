@@ -3,7 +3,7 @@ import unittest
 from constants import SlotEnum, TypeEnum
 from fetch_urls import FetchUrls
 from hello import extractItems
-from tools import Item
+from tools import Item, Page
 
 
 class Mockup():
@@ -142,13 +142,13 @@ class UnitTest():
         expected6 = Mockup.item_by_quest()
         expected7 = Mockup.item_by_treasure()
 
-        item1 = extractItems([expected1.url])[0]
-        item2 = extractItems([expected2.url])[0]
-        item3 = extractItems([expected3.url])[0]
-        item4 = extractItems([expected4.url])[0]
-        item5 = extractItems([expected5.url])[0]
-        item6 = extractItems([expected6.url])[0]
-        item7 = extractItems([expected7.url])[0]
+        item1 = extractItems([Page(expected1.url, {'itemUrls': [expected1.url]})])[0].metadata['items'][0]
+        item2 = extractItems([Page(expected2.url, {'itemUrls': [expected2.url]})])[0].metadata['items'][0]
+        item3 = extractItems([Page(expected3.url, {'itemUrls': [expected3.url]})])[0].metadata['items'][0]
+        item4 = extractItems([Page(expected4.url, {'itemUrls': [expected4.url]})])[0].metadata['items'][0]
+        item5 = extractItems([Page(expected5.url, {'itemUrls': [expected5.url]})])[0].metadata['items'][0]
+        item6 = extractItems([Page(expected6.url, {'itemUrls': [expected6.url]})])[0].metadata['items'][0]
+        item7 = extractItems([Page(expected7.url, {'itemUrls': [expected7.url]})])[0].metadata['items'][0]
 
         Assert.assert_item('item_test_boss', expected1, item1)
         Assert.assert_item('item_world_drop', expected2, item2)

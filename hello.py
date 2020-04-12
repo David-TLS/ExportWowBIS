@@ -8,6 +8,7 @@ from constants import (ClasseEnum, Global, PhaseEnum, RegexEnum, SlotEnum,
 from tools import (FetchHtmls, Item, Page, WowIsClassicBisParser, distinct,
                    extractAll, extractSingle, listEnum, log, merge)
 
+logging.basicConfig(filename='hello.log',level=logging.DEBUG)
 
 # return all urls for all phase/classes/spe
 def generatePage():
@@ -79,7 +80,7 @@ def extractItems(pages):
                     if (bool(extractSingle(RegexEnum.REGEX_IS_CONTAINED, html))):
                         item.type = TypeEnum.TYPE_BY_TREASURE
                         item.location = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', locationIds[0]), html)
-                        item.method = extractSingle(RegexEnum.REGEX_TREASURE_LOCATION.replace('locationId', locationIds[0]), html)
+                        item.method = extractSingle(RegexEnum.REGEX_TREASURE_LOCATION.replace('{locationId}', locationIds[0]), html)
                         item.dropRate = TypeEnum.EMPTY
 
                     # item have a location
@@ -111,10 +112,10 @@ def extractItems(pages):
                             craftLocation  = extractAll(RegexEnum.REGEX_CRAFT_LOCATION.replace('{itemName}', str(item.name)), html)
                             if(craftLocation):
                                 # item have a sub locationz
-                                if(craftLocation and bool(craftLocation[0][3])):
-                                    item.location = craftLocation[0][3]
+                                if(craftLocation and bool(craftLocation[0][4])):
+                                    item.location = craftLocation[0][4]
                                 else:
-                                    item.location  = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(craftLocation[0][5])), html)
+                                    item.location  = extractSingle(RegexEnum.REGEX_LOCATION_NAME.replace('{locationId}', str(craftLocation[0][7])), html)
 
                         # item by quest
                         else:
@@ -162,26 +163,24 @@ def pagesToBistracker(pages):
 
     return dic
 
-logging.basicConfig(filename='hello.log',level=logging.DEBUG)
+# log('--start generatePage')
+# pages = generatePage()
+# log('--end generatePage')
 
-log('--start generatePage')
-pages = generatePage()
-log('--end generatePage')
+# log('--start extractItemUrls')
+# extractItemUrls(pages)
+# log('--end extractItemUrls')
 
-log('--start extractItemUrls')
-extractItemUrls(pages)
-log('--end extractItemUrls')
+# log('--start extractItems')
+# extractItems(pages)
+# log('--start extractItems')
 
-log('--start extractItems')
-extractItems(pages)
-log('--start extractItems')
+# log('--start pagesToBistracker')
+# extract = pagesToBistracker(pages)
+# log('--end pagesToBistracker')
 
-log('--start pagesToBistracker')
-extract = pagesToBistracker(pages)
-log('--end pagesToBistracker')
-
-with open('out.txt', 'w') as f:
-    print(json.dumps(extract), file=f)
+# with open('out.txt', 'w') as f:
+#     print(json.dumps(extract), file=f)
 
 
 # pages = extractItems(
@@ -218,16 +217,3 @@ with open('out.txt', 'w') as f:
 #         ]
 #     )
 # )
-# extract = pagesToBistracker(pages)
-
-# print(json.dumps([ob.__dict__ for
-
-#  ob in aaaa]))
-    
-
- 
-# extract()
-
-# extractItems(['https://classic.wowhead.com/item=19147/ring-of-spell-power'])
-
-# extractItemInformations(['https://classic.wowhead.com/item=18500/tarnished-elven-ring#dropped-by'])

@@ -16,10 +16,10 @@ class RegexEnum():
     REGEX_PROFESSION = '(?<=guides\/)(.*?)(?=-classic-wow-1-300)'
     REGEX_QUEST_NAME = '(?<="name":")(.*)(?=","reprewards":)'
     REGEX_QUEST_LOCATION_ID = '(?<=data: \[{"category":)(.*?)(?=,")'
-    REGEX_CRAFT_LOCATION = '("name":"Pattern: {itemName}")((.*)(?<="n":")(.*)(?=",))?(.*)(?<="z":)(.*?)(?=})(.*)'
+    REGEX_CRAFT_LOCATION = '("name":"Pattern: {itemName}")(((.*)(?<="n":")(.*)(?=",))|((.*)(?<="z":)(.*?)(?=})(.*)))'
     REGEX_SLOT_ID = '(?<=,"slot":)(.*?)(?=,"slotbak)'
     REGEX_IS_CONTAINED = 'id: \'contained-in-object\''
-    REGEX_TREASURE_LOCATION ='(?<=location":\[locationId\],"name":")(.*?)(?=")'
+    REGEX_TREASURE_LOCATION ='(?<=location":\[{locationId}\],"name":")(.*?)(?=")'
 
 class Global():
     DATA_WH_ICON_SIZE = 'data-wh-icon-size'

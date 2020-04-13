@@ -72,13 +72,13 @@ WowHeadEnum = {
     '8'  : SlotEnum.Boots,
     '11'  : SlotEnum.Ring,
     '12'  : SlotEnum.Trinket,
-    '13'  : SlotEnum.OneHand,
+    '13'  : SlotEnum.MainHand, # OneHand
+    '17'  : SlotEnum.MainHand, # TwoHand
     '21'  : SlotEnum.MainHand,
+    '23'  : SlotEnum.OffHand, # HeldInOffHand
     '14'  : SlotEnum.OffHand,
     '22'  : SlotEnum.OffHand,
-    '23'  : SlotEnum.HeldInOffHand,
     '15'  : SlotEnum.Ranged,
-    '17'  : SlotEnum.TwoHand,
     '28'  : SlotEnum.Relic
 }
 

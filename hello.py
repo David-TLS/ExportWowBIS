@@ -172,10 +172,10 @@ def pagesToBistracker(pages):
             name_classe = ClasseEnum(key_pages).name
             name_spe = (WowIsClassicSpe[page.metadata['spe']].value).name
             name_phase = PhaseEnum(page.metadata['phase']).name
-            slots = []
+            slots = {}
 
             for item in page.metadata['items']:
-
+                log(name_classe + ' ' + name_spe + ' ' + name_phase + ' :' + item.url)
                 slot = {
                     'itemID' : item.id,
                     'obtain': {
@@ -186,8 +186,20 @@ def pagesToBistracker(pages):
                         'Url' : item.url
                     }
                 }
+                
+                slotName = item.slot.name
 
-                slots.append({item.slot.name: slot})
+                # case: several ring and trinket
+                if(item.slot in {SlotEnum.Ring, SlotEnum.Trinket}):
+                    dic_found = {k: v for k, v in slots.items() if slotName in k}
+                    slotName += "2" if len(dic_found) > 0 else "1"
+
+                # case: classe with ambidexterity
+                if(item.slot in {SlotEnum.MainHand}):
+                    dic_found = {k: v for k, v in slots.items() if slotName in k}
+                    slotName = SlotEnum.OffHand.name if len(dic_found) > 0 else SlotEnum.MainHand.name
+
+                slots = merge(slots, {slotName: slot})
 
             dic = merge(dic, {name_classe: {name_spe: {name_phase: slots}}})
 

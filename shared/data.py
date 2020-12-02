@@ -1,3 +1,4 @@
+# data use to generate WowIsClassic links
 classes = {
     'warrior': ['prot', 'fury'],
     'warlock': ['all'],

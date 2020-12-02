@@ -1,8 +1,8 @@
 import unittest
 
-from constants import SlotEnum, TypeEnum
-from fetch_urls import FetchUrls
-from hello import extractItems
+from constants import SlotEnum, BisTrackerEnum
+from fetch_url import FetchUrl
+from get_page import (extractItems, extractItemUrls, generatePage,pagesToBistracker)
 from tools import Item, Page
 
 
@@ -14,8 +14,8 @@ class Mockup():
         expected.id = '16921'
         expected.name = 'Halo of Transcendence'
         expected.location = 'Onyxia\'s Lair'
-        expected.type = TypeEnum.BY_KILLING
-        expected.method = TypeEnum.METHOD_KILL.replace('{targetName}', 'Onyxia')
+        expected.type = BisTrackerEnum.BY_KILLING
+        expected.method = BisTrackerEnum.METHOD_KILL.replace('{targetName}', 'Onyxia')
         expected.dropRate = '18.19%'
         expected.slot = SlotEnum(1)
         expected.url = 'https://classic.wowhead.com/item=16921/halo-of-transcendence'
@@ -27,11 +27,11 @@ class Mockup():
         expected = Item()
         expected.id = '13102'
         expected.name = 'Cassandra\'s Grace'
-        expected.type = TypeEnum.BY_KILLING 
-        expected.location = TypeEnum.TYPE_BY_WORLD_EVENT
+        expected.type = BisTrackerEnum.BY_KILLING 
+        expected.location = BisTrackerEnum.TYPE_BY_WORLD_EVENT
         expected.slot = SlotEnum(1)
-        expected.method = TypeEnum.EMPTY
-        expected.dropRate = TypeEnum.EMPTY
+        expected.method = BisTrackerEnum.EMPTY
+        expected.dropRate = BisTrackerEnum.EMPTY
         expected.url = 'https://classic.wowhead.com/item=13102/gr%C3%A2ce-de-cassandre'
         return expected
 
@@ -40,12 +40,12 @@ class Mockup():
         #arrange
         expected = Item()
         expected.id = '19147'
-        expected.type = TypeEnum.BY_KILLING 
-        expected.method = TypeEnum.METHOD_SEVERAL_BOSSESS 
+        expected.type = BisTrackerEnum.BY_KILLING 
+        expected.method = BisTrackerEnum.METHOD_SEVERAL_BOSSESS 
         expected.name = 'Ring of Spell Power'
         expected.location = 'Molten Core'
         expected.slot = SlotEnum(11)
-        expected.dropRate = TypeEnum.EMPTY
+        expected.dropRate = BisTrackerEnum.EMPTY
         expected.url = 'https://classic.wowhead.com/item=19147/ring-of-spell-power'
         return expected
 
@@ -55,11 +55,11 @@ class Mockup():
         expected = Item()
         expected.id = '18405'
         expected.name = 'Belt of the Archmage'
-        expected.type = TypeEnum.TYPE_BY_PROFESSION.replace('{professionName}', 'Tailoring')
+        expected.type = BisTrackerEnum.TYPE_BY_PROFESSION.replace('{professionName}', 'Tailoring')
         expected.location = 'Knot Thimblejack\'s Cache'
         expected.slot = SlotEnum(6)
-        expected.dropRate = TypeEnum.EMPTY
-        expected.method = TypeEnum.EMPTY
+        expected.dropRate = BisTrackerEnum.EMPTY
+        expected.method = BisTrackerEnum.EMPTY
         expected.url = 'https://classic.wowhead.com/item=18405/belt-of-the-archmage'
         return expected
 
@@ -69,11 +69,11 @@ class Mockup():
         expected = Item()
         expected.id = '14154'
         expected.name = 'Truefaith Vestments'
-        expected.type = TypeEnum.TYPE_BY_PROFESSION.replace('{professionName}', 'Tailoring')
+        expected.type = BisTrackerEnum.TYPE_BY_PROFESSION.replace('{professionName}', 'Tailoring')
         expected.location = 'Stratholme'
         expected.slot = SlotEnum(5)
-        expected.dropRate = TypeEnum.EMPTY
-        expected.method = TypeEnum.EMPTY
+        expected.dropRate = BisTrackerEnum.EMPTY
+        expected.method = BisTrackerEnum.EMPTY
         expected.url = 'https://classic.wowhead.com/item=14154/truefaith-vestments'
         return expected
 
@@ -83,7 +83,7 @@ class Mockup():
         expected = Item()
         expected.id = '18469'
         expected.name = 'Royal Seal of Eldre\'Thalas'
-        expected.type = TypeEnum.TYPE_BY_QUEST
+        expected.type = BisTrackerEnum.TYPE_BY_QUEST
         expected.method = 'Holy Bologna: What the Light Won\'t Tell You'
         expected.location = 'Dire Maul'
         expected.slot = SlotEnum(12)
@@ -96,7 +96,7 @@ class Mockup():
         expected = Item()
         expected.id = '11927'
         expected.name = 'Legplates of the Eternal Guardian'
-        expected.type = TypeEnum.TYPE_BY_TREASURE
+        expected.type = BisTrackerEnum.TYPE_BY_TREASURE
         expected.method = 'Chest of The Seven'
         expected.location = 'Blackrock Depths'
         expected.slot = SlotEnum(7)
@@ -110,7 +110,7 @@ class Mockup():
         expected.id = '19383'
         expected.name = 'Master Dragonslayer\'s Medallion'
         expected.location = 'Stormwind City, Orgrimmar'
-        expected.type = TypeEnum.TYPE_BY_QUEST
+        expected.type = BisTrackerEnum.TYPE_BY_QUEST
         expected.method = "The Lord of Blackrock"
         expected.slot = SlotEnum(2)
         expected.url = 'https://classic.wowhead.com/item=19383/master-dragonslayers-medallion'

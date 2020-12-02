@@ -3,7 +3,8 @@ import asyncio
 from aiohttp import ClientSession
 
 
-class FetchUrls():
+# fetch in parallel several urls
+class FetchUrl():
     
     def __init__(self, urls):
         self.urls = urls
@@ -11,7 +12,7 @@ class FetchUrls():
 
     def __enter__(self):
         self.loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(FetchUrls.__run(self.urls, self.lenght))
+        future = asyncio.ensure_future(FetchUrl.__run(self.urls, self.lenght))
         return self.loop.run_until_complete(future)
 
     def __exit__(self, type, value, traceback):
@@ -27,7 +28,7 @@ class FetchUrls():
     async def __bound_fetch(sem, url, session):
         # Getter function with semaphore.
         async with sem:
-            return await FetchUrls.__fetch(url, session)
+            return await FetchUrl.__fetch(url, session)
 
 
     @staticmethod
@@ -36,7 +37,7 @@ class FetchUrls():
         sem = asyncio.Semaphore(lenght)
         async with ClientSession() as session:
             for url in urls:
-                task = asyncio.ensure_future(FetchUrls.__bound_fetch(sem, url, session))
+                task = asyncio.ensure_future(FetchUrl.__bound_fetch(sem, url, session))
                 tasks.append(task)
             responses = asyncio.gather(*tasks)
             return await responses

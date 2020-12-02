@@ -4,6 +4,7 @@
 from enum import Enum, auto
 
 
+# regex use to parse WoWHead
 class RegexEnum():
     REGEX_BIS_WOWHEAD_LINK = '(?<=item=)(.*)'
     REGEX_ITEM_ID = '(?<=item=)(.*?)(?=\/)'
@@ -21,22 +22,24 @@ class RegexEnum():
     REGEX_IS_CONTAINED = 'id: \'contained-in-object\''
     REGEX_TREASURE_LOCATION ='(?<=location":\[{locationId}\],"name":")(.*?)(?=")'
 
+# constant use in general in the application
 class Global():
     DATA_WH_ICON_SIZE = 'data-wh-icon-size'
     URL_WOW_IS_CLASSIC = 'https://www.wowisclassic.com/en/best-in-slot/'
 
 
-class TypeEnum():
+class BisTrackerEnum():
     BY_KILLING = "By Killing"
     TYPE_BY_PROFESSION = "by Profession ({professionName})"
     TYPE_BY_QUEST = "By Quest"
     TYPE_BY_TREASURE = "By Treasure"
     TYPE_BY_WORLD_EVENT = "By World Event"
     METHOD_BY_QUEST = "By quest: {questName}"
-    METHOD_KILL = "Kill: {targetName}"
+    METHOD_KILL = "{targetName}"
     METHOD_SEVERAL_BOSSESS = "Several bosses"
     EMPTY = "N/A"
 
+# all item slot 
 class SlotEnum(Enum):
     Head = auto()
     Neck = auto()
@@ -59,6 +62,7 @@ class SlotEnum(Enum):
     HeldInOffHand = auto()
     Relic = auto()
 
+# mapping slot item with WowHead
 WowHeadEnum = {
     '1'  : SlotEnum.Head,
     '2'  : SlotEnum.Neck,
@@ -82,6 +86,7 @@ WowHeadEnum = {
     '28'  : SlotEnum.Relic
 }
 
+# all phase, comment or uncomment to enabled or disable phase exportation
 class PhaseEnum(Enum):
     # Phase1 = '1'
     # Phase2PreRaid = 'pre-raid'
@@ -91,6 +96,7 @@ class PhaseEnum(Enum):
     # Phase5 = '5'
     # Phase6 = '6'
 
+# all classes
 class ClasseEnum(Enum):
     Druid = 'druid'
     Hunter = 'hunter'
@@ -102,7 +108,7 @@ class ClasseEnum(Enum):
     Warrior = 'warrior'
     Warlock = 'warlock'
 
-
+# all specialization
 class SpeEnum(Enum):
     All = auto()
     Fury = auto()
@@ -119,6 +125,8 @@ class SpeEnum(Enum):
     FeralDps = auto()
     Balance = auto()
 
+
+# mapping specialization with WowIsClassic
 class WowIsClassicSpe(Enum):
     all = SpeEnum.All
     prot = SpeEnum.Protection
